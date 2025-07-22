@@ -148,7 +148,7 @@
       submitButton.textContent = 'Fetching...';
 
       try {
-        const res = await fetch(`/api/download/${code}`);
+        const res = await fetch(`https://filebolt.onrender.com/api/download/${code}`);
         const data = await res.json();
         
         if (data.error) {
@@ -172,7 +172,7 @@
         });
 
         // Setup button actions
-        downloadZip.onclick = () => { window.location.href = `/api/download/${code}/zip`; };
+        downloadZip.onclick = () => { window.location.href = `https://filebolt.onrender.com/api/download/${code}/zip`; };
         deleteFiles.onclick = handleDelete;
         
         // Animate the file list into view
@@ -192,7 +192,7 @@
       if (!confirm('Are you sure you want to permanently delete these files? This action cannot be undone.')) return;
       
       try {
-        const delRes = await fetch(`/api/delete/${currentCode}`, { method: 'DELETE' });
+        const delRes = await fetch(`https://filebolt.onrender.com/api/delete/${currentCode}`, { method: 'DELETE' });
         if (delRes.ok) {
           // Animate out and reset
           filesContainer.style.maxHeight = '0';
