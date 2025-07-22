@@ -1,59 +1,44 @@
 const express = require('express');
-const path = require('path');
-const fs = require('fs');
-const archiver = require('archiver');
 const FileGroup = require('../models/FileGroup');
+const archiver = require('archiver');
+const fs = require('fs');
+const path = require('path');
 
 const router = express.Router();
 
-// Get files by code
+// ✅ Get files list
 router.get('/:code', async (req, res) => {
-  try {
-    const group = await FileGroup.findOne({ code: req.params.code });
-    if (!group) return res.status(404).json({ error: 'Invalid code.' });
-
-    res.status(200).json({ files: group.files });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
-  }
+  const group = await FileGroup.findOne({ code: req.params.code });
+  if (!group) return res.status(404).json({ error: 'Code not found' });
+  res.json({ files: group.files });
 });
 
-// Download zip
-router.get('/:code/zip', async (req, res) => {
-  try {
-    const group = await FileGroup.findOne({ code: req.params.code });
-    if (!group) return res.status(404).send('Invalid code.');
-
-    const archive = archiver('zip');
-    res.attachment('files.zip');
-    archive.pipe(res);
-
-    group.files.forEach(file => {
-      archive.file(file.path, { name: file.originalname });
-    });
-
-    archive.finalize();
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Server error');
-  }
-});
-
-// Download single file
+// ✅ Download single file
 router.get('/:code/:filename', async (req, res) => {
-  try {
-    const group = await FileGroup.findOne({ code: req.params.code });
-    if (!group) return res.status(404).send('Invalid code.');
+  const group = await FileGroup.findOne({ code: req.params.code });
+  if (!group) return res.status(404).json({ error: 'Code not found' });
 
-    const file = group.files.find(f => f.filename === req.params.filename);
-    if (!file) return res.status(404).send('File not found.');
+  const file = group.files.find(f => f.filename === req.params.filename);
+  if (!file) return res.status(404).json({ error: 'File not found' });
 
-    res.download(path.resolve(file.path), file.originalname);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Server error');
-  }
+  res.download(path.join(__dirname, '..', 'uploads', file.filename));
+});
+
+// ✅ Download all as ZIP
+router.get('/:code/zip', async (req, res) => {
+  const group = await FileGroup.findOne({ code: req.params.code });
+  if (!group) return res.status(404).json({ error: 'Code not found' });
+
+  res.attachment(`${req.params.code}.zip`);
+  const archive = archiver('zip');
+  archive.pipe(res);
+
+  group.files.forEach(file => {
+    const filePath = path.join(__dirname, '..', 'uploads', file.filename);
+    archive.file(filePath, { name: file.originalname });
+  });
+
+  archive.finalize();
 });
 
 module.exports = router;

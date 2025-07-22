@@ -2,29 +2,28 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const path = require('path');
+const cors = require('cors');
 
 dotenv.config();
 
 const app = express();
 
-// MongoDB connect
-mongoose.connect(process.env.MONGO_URI, {
-}).then(() => console.log('✅ MongoDB connected'))
-  .catch(err => console.error('❌ MongoDB connection error:', err));
+// ✅ Allow CORS if frontend is separate
+app.use(cors());
 
-// Serve static files (frontend)
+// ✅ Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('✅ MongoDB connected'))
+  .catch(err => console.error('❌ MongoDB error:', err));
+
+// ✅ Serve static frontend (if you have it in /public)
 app.use(express.static('public'));
 
-// Routes
-const uploadRoutes = require('./routes/uploadRoutes');
-const downloadRoutes = require('./routes/downloadRoutes');
-const deleteRoutes = require('./routes/deleteRoutes');
+// ✅ Routes
+app.use('/api/upload', require('./routes/uploadRoutes'));
+app.use('/api/download', require('./routes/downloadRoutes'));
+app.use('/api/delete', require('./routes/deleteRoutes'));
 
-app.use('/api/upload', uploadRoutes);
-app.use('/api/download', downloadRoutes);
-app.use('/api/delete', deleteRoutes);
-
+// ✅ Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));

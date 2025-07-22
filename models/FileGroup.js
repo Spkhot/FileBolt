@@ -1,20 +1,16 @@
 const mongoose = require('mongoose');
 
-const fileSchema = new mongoose.Schema({
+const FileSchema = new mongoose.Schema({
   filename: String,
   originalname: String,
   path: String,
-  size: Number
+  size: Number,
 });
 
-const fileGroupSchema = new mongoose.Schema({
-  code: String,
-  files: [fileSchema],
-  createdAt: {
-    type: Date,
-    default: Date.now,
-    expires: 60 * 60 * 24 // Auto-delete after 24 hours
-  }
+const FileGroupSchema = new mongoose.Schema({
+  code: { type: String, unique: true },
+  files: [FileSchema],
+  createdAt: { type: Date, default: Date.now, expires: '1d' }, // auto-delete after 1 day
 });
 
-module.exports = mongoose.model('FileGroup', fileGroupSchema);
+module.exports = mongoose.model('FileGroup', FileGroupSchema);

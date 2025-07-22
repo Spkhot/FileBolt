@@ -1,3 +1,6 @@
-module.exports = function (code) {
-  return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${code}`;
+const QRCode = require('qrcode');
+
+module.exports = function generateQR(code) {
+  const url = `https://filebolt.onrender.com/receive.html?code=${code}`;
+  return QRCode.toDataURL(url);
 };
