@@ -4,7 +4,12 @@ const generateQR = require('../utils/generateQR');
 
 exports.handleUpload = async (req, res) => {
   try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: 'No files uploaded.' });
+    }
+
     const code = generateCode();
+    console.log('Generated code:', code);
 
     const files = req.files.map(file => ({
       filename: file.filename,
@@ -14,13 +19,15 @@ exports.handleUpload = async (req, res) => {
     }));
 
     const newGroup = new FileGroup({ code, files });
-    await newGroup.save();
+    const savedGroup = await newGroup.save();
 
     const qrData = generateQR(code);
 
+    console.log('Upload successful:', savedGroup);
+
     res.status(200).json({ code, qrData });
   } catch (err) {
-    console.error(err);
+    console.error('❌ Upload Controller Error:', err);
     res.status(500).json({ error: 'Upload failed' });
   }
 };
