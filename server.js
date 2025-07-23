@@ -3,11 +3,10 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const path = require('path');
 const cors = require('cors');
-
+const uploadRoutes = require('./routes/uploadRoutes');
 dotenv.config();
 
 const app = express();
-
 // ✅ Allow CORS if frontend is separate
 app.use(cors());
 
