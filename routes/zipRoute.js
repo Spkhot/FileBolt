@@ -15,14 +15,20 @@ router.get('/:code', async (req, res) => {
     archive.pipe(res);
 
     for (const file of group.files) {
-      const response = await axios.get(file.url, { responseType: 'stream' });
-      archive.append(response.data, { name: file.originalname });
+      try {
+        const response = await axios.get(file.url, { responseType: 'stream' });
+        archive.append(response.data, { name: file.originalname });
+      } catch (err) {
+        console.error(`❌ Failed to fetch: ${file.url}`);
+      }
     }
 
-    await archive.finalize();
+    archive.finalize();
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Could not create ZIP.' });
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Could not create ZIP.' });
+    }
   }
 });
 

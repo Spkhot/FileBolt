@@ -7,15 +7,6 @@ exports.handleUpload = async (req, res) => {
   try {
     const code = generateCode();
 
-    const uploadPromises = req.files.map(file => {
-      return cloudinary.uploader.upload_stream({
-        resource_type: 'auto'
-      }, (error, result) => {
-        if (error) throw error;
-        return result;
-      }).end(file.buffer);
-    });
-
     const uploadResults = await Promise.all(
       req.files.map(file => {
         return new Promise((resolve, reject) => {
@@ -27,7 +18,8 @@ exports.handleUpload = async (req, res) => {
                 filename: file.originalname.replace(/\s+/g, '_'),
                 originalname: file.originalname,
                 url: result.secure_url,
-                size: file.size
+                size: file.size,
+                cloudinaryId: result.public_id // ✅ for cleanup later
               });
             }
           ).end(file.buffer);
@@ -41,6 +33,7 @@ exports.handleUpload = async (req, res) => {
     const qrData = await generateQR(code);
 
     res.status(200).json({ code, qrData });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Upload failed' });

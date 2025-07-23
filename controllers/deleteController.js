@@ -14,10 +14,17 @@ exports.handleDelete = async (req, res) => {
   if (!group) return res.status(404).json({ error: 'Invalid code' });
 
   for (const file of group.files) {
-    await cloudinary.uploader.destroy(file.cloudinaryId);
+    if (file.cloudinaryId) {
+      try {
+        await cloudinary.uploader.destroy(file.cloudinaryId, { resource_type: 'auto' });
+      } catch (err) {
+        console.error(`Failed to delete ${file.cloudinaryId}:`, err.message);
+      }
+    }
   }
 
   await group.deleteOne();
 
   res.json({ message: 'Files deleted' });
 };
+
