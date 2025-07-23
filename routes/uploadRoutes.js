@@ -1,23 +1,25 @@
 const express = require('express');
 const multer = require('multer');
+const path = require('path');
 const uploadController = require('../controllers/uploadController');
 
 const router = express.Router();
 
+const storage = multer.diskStorage({
+  destination: './uploads/',
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+
 const upload = multer({
-  dest: './uploads/',
+  storage,
   limits: { fileSize: 20 * 1024 * 1024 }
-}).any(); // <-- accept ANY field name
+}).array('files', 5);
 
 router.post('/', (req, res) => {
-  console.log('🔥 Upload endpoint hit');
-
-  upload(req, res, err => {
-    console.log('📂 Files:', req.files);
-    console.log('📝 Body:', req.body);
-
+  upload(req, res, (err) => {
     if (err) {
-      console.error('💥 Multer error:', err);
       return res.status(400).json({ error: err.message });
     }
     uploadController.handleUpload(req, res);

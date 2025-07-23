@@ -1,26 +1,23 @@
 const FileGroup = require('../models/FileGroup');
-const fs = require('fs');
+const cloudinary = require('cloudinary').v2;
 
-exports.deleteFiles = async (req, res) => {
-  try {
-    // 1️⃣ Find the group by code
-    const group = await FileGroup.findOne({ code: req.params.code });
-    if (!group) return res.status(404).send('Invalid code.');
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
-    // 2️⃣ Loop over each file in group and delete from disk
-    for (const file of group.files) {
-      fs.unlink(file.path, err => {
-        if (err) console.error('Failed to delete:', file.path);
-      });
-    }
+exports.handleDelete = async (req, res) => {
+  const { code } = req.params;
 
-    // 3️⃣ Remove the MongoDB document too
-    await FileGroup.deleteOne({ code: req.params.code });
+  const group = await FileGroup.findOne({ code });
+  if (!group) return res.status(404).json({ error: 'Invalid code' });
 
-    // 4️⃣ Respond success
-    res.status(200).send('Files deleted.');
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Server error');
+  for (const file of group.files) {
+    await cloudinary.uploader.destroy(file.cloudinaryId);
   }
+
+  await group.deleteOne();
+
+  res.json({ message: 'Files deleted' });
 };

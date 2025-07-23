@@ -1,23 +1,26 @@
 const archiver = require('archiver');
-const fs = require('fs');
-const path = require('path');
+const axios = require('axios');
 
 /**
- * Creates a zip stream from files and pipes to the response.
- * @param {Array} files - Array of file objects with `path` and `originalname`
- * @param {Object} res - Express response to pipe to
+ * Creates a zip from remote URLs and pipes to response.
+ * @param {Array} files - [{ url, originalname }]
+ * @param {Object} res - Express res
  */
-module.exports = function createZip(files, res) {
+module.exports = async function createZip(files, res) {
   const archive = archiver('zip', { zlib: { level: 9 } });
 
-  // Tell browser to treat as attachment
   res.attachment('files.zip');
-
   archive.pipe(res);
 
-  files.forEach(file => {
-    archive.file(path.resolve(file.path), { name: file.originalname });
-  });
+  for (const file of files) {
+    const response = await axios({
+      method: 'get',
+      url: file.url,
+      responseType: 'stream',
+    });
 
-  archive.finalize();
+    archive.append(response.data, { name: file.originalname });
+  }
+
+  await archive.finalize();
 };
