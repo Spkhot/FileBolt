@@ -27,3 +27,4 @@ app.use('/api/delete', require('./routes/deleteRoutes'));
 // ✅ Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+console.log('Loaded MONGO_URI:', process.env.MONGO_URI);
