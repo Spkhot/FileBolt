@@ -258,7 +258,7 @@
         filesArray.forEach(file => formData.append('files', file));
 
         try {
-            const res = await fetch('/api/upload', { method: 'POST', body: formData });
+            const res = await fetch('https://filebolt.onrender.com/api/upload', { method: 'POST', body: formData });
             const data = await res.json();
 
             if (data.error) {

@@ -150,7 +150,7 @@
       getFilesBtnSpinner.classList.remove('hidden');
 
       try {
-        const res = await fetch(`/api/download/${code}`);
+        const res = await fetch(`https://filebolt.onrender.com/api/download/${code}`);
         const data = await res.json();
 
         if (data.error) {
@@ -170,7 +170,7 @@
         `).join('');
         
         // Setup action buttons
-        zipLink.href = `/api/zip/${code}`;
+        zipLink.href = `https://filebolt.onrender.com/api/zip/${code}`;
         deleteBtn.onclick = () => handleDelete(code);
 
         // Animate transition
@@ -201,7 +201,7 @@
       if (!confirm('Are you sure you want to permanently delete these files? This action cannot be undone.')) return;
       
       try {
-        const delRes = await fetch(`/api/delete/${code}`, { method: 'DELETE' });
+        const delRes = await fetch(`https://filebolt.onrender.com/api/delete/${code}`, { method: 'DELETE' });
         const delData = await delRes.json();
         
         if (delData.error) {
