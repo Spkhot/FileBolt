@@ -3,184 +3,126 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FileBolt — Fast File Transfer</title>
+  <title>FileBolt — Fast & Secure File and Note Transfer</title>
   
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Google Fonts: Poppins -->
   <link rel="icon" href="logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <!-- Custom Styles and Animations -->
   <style>
-    /* Apply custom font */
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #020617; /* slate-950 as a fallback */
-      overflow-x: hidden;
-    }
-    
-    /* Main background with animated gradient AND a static dot pattern */
-    .main-background {
-        background-color: #0D1117; /* A dark slate color */
-        background-image: 
-            radial-gradient(circle at 25% 25%, rgba(192, 38, 211, 0.2), transparent 40%),
-            radial-gradient(circle at 75% 75%, rgba(6, 182, 212, 0.2), transparent 40%),
-            radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-        background-size: 100% 100%, 100% 100%, 8px 8px;
-        animation: background-pan 20s linear infinite;
-    }
-    
-    @keyframes background-pan {
-      0% { background-position: 0% 0%, 0% 0%, 0 0; }
-      100% { background-position: 100% 100%, -100% -100%, 0 0; }
-    }
-
-    /* Floating shapes animation */
-    @keyframes float {
-      0% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-25px) rotate(180deg); }
-      100% { transform: translateY(0px) rotate(360deg); }
-    }
-
-    .shape {
-      position: absolute;
-      border-radius: 50%;
-      animation: float 15s ease-in-out infinite;
-      z-index: 0;
-    }
-    
-    /* Glassmorphism card style for the dark theme */
-    .glass-card {
-        background: rgba(15, 23, 42, 0.5); /* slate-900 with 50% opacity */
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    /* Gradient text utility */
-    .gradient-text {
-        background-image: linear-gradient(to right, #d946ef, #22d3ee); /* fuchsia-500 to cyan-400 */
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-    }
-    
-    /* Animation classes for scroll effects */
-    .fade-in-up {
-      opacity: 0;
-      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-      transform: translateY(30px);
-    }
-
-    .fade-in-up.is-visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    body { font-family: 'Poppins', sans-serif; background-color: #020617; overflow-x: hidden; }
+    .main-background { background-color: #0D1117; background-image: radial-gradient(circle at 25% 25%, rgba(192, 38, 211, 0.2), transparent 40%), radial-gradient(circle at 75% 75%, rgba(6, 182, 212, 0.2), transparent 40%), radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px); background-size: 100% 100%, 100% 100%, 8px 8px; animation: background-pan 20s linear infinite; }
+    @keyframes background-pan { 0% { background-position: 0% 0%, 0% 0%, 0 0; } 100% { background-position: 100% 100%, -100% -100%, 0 0; } }
+    @keyframes float { 0% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-25px) rotate(180deg); } 100% { transform: translateY(0px) rotate(360deg); } }
+    .shape { position: absolute; border-radius: 50%; animation: float 15s ease-in-out infinite; z-index: 0; }
+    .glass-card { background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .gradient-text { background-image: linear-gradient(to right, #d946ef, #22d3ee); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .fade-in-up { opacity: 0; transition: opacity 0.6s ease-out, transform 0.6s ease-out; transform: translateY(30px); }
+    .fade-in-up.is-visible { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 
 <body class="main-background text-slate-200 antialiased">
   
-  <!-- Floating Shapes (decorative) -->
-  <div class="absolute top-0 left-0 w-full h-full overflow-hidden">
+  <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
     <div class="shape bg-fuchsia-500/10 w-64 h-64 -top-20 -left-20" style="animation-delay: 0s; animation-duration: 20s;"></div>
     <div class="shape bg-cyan-500/10 w-72 h-72 bottom-0 -right-20" style="animation-delay: 2s; animation-duration: 25s;"></div>
   </div>
 
-  <!-- Main Content Wrapper -->
   <div class="relative z-10 flex flex-col min-h-screen">
     
-    <!-- STICKY HEADER -->
     <header class="sticky top-0 z-50 p-4">
         <div class="glass-card max-w-7xl mx-auto rounded-xl shadow-lg border-slate-800">
-            <nav class="flex justify-between items-center px-6 py-3">
+            <nav class="flex justify-between items-center px-4 sm:px-6 py-3">
                 <a href="index.html" class="flex items-center gap-3 group">
                     <svg class="w-8 h-8 text-white group-hover:scale-110 transition-transform duration-300" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#d946ef;" />
-                                <stop offset="100%" style="stop-color:#22d3ee;" />
-                            </linearGradient>
-                        </defs>
+                        <defs><linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#d946ef;" /><stop offset="100%" style="stop-color:#22d3ee;" /></linearGradient></defs>
                         <path d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" stroke="url(#logoGradient)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                     <h1 class="text-2xl font-bold text-white">FileBolt</h1>
                 </a>
-                <a href="#how-it-works" class="font-semibold text-slate-300 hover:text-white relative after:content-[''] after:absolute after:left-0 after:bottom-[-4px] after:w-0 after:h-0.5 after:bg-cyan-400 after:transition-all after:duration-300 hover:after:w-full hidden sm:block">How It Works</a>
-                <a href="send-text.html" class="font-semibold text-slate-300 hover:text-white relative after:content-[''] after:absolute after:left-0 after:bottom-[-4px] after:w-0 after:h-0.5 after:bg-cyan-400 after:transition-all after:duration-300 hover:after:w-full hidden sm:block">Send Notes</a>
-                <a href="receive-text.html" class="font-semibold text-slate-300 hover:text-white relative after:content-[''] after:absolute after:left-0 after:bottom-[-4px] after:w-0 after:h-0.5 after:bg-cyan-400 after:transition-all after:duration-300 hover:after:w-full hidden sm:block">Receive Notes</a>
                 
+                <!-- Desktop Navigation -->
+                <div class="hidden sm:flex items-center gap-6">
+                    <a href="#how-it-works" class="font-semibold text-slate-300 hover:text-white transition-colors duration-300">How It Works</a>
+                    <a href="send-text.html" class="font-semibold text-slate-300 hover:text-white transition-colors duration-300">Send Note</a>
+                    <a href="receive.html" class="font-semibold bg-cyan-600/80 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg transition-colors duration-300">Receive</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="sm:hidden">
+                    <button id="menu-btn" class="p-2 rounded-md text-slate-300 hover:text-white hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cyan-500">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
             </nav>
+            <!-- Mobile Menu Panel -->
+            <div id="mobile-menu" class="hidden sm:hidden">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a href="#how-it-works" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-700/50">How It Works</a>
+                    <a href="send.html" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-700/50">Send Files</a>
+                    <a href="send-text.html" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-700/50">Send a Note</a>
+                    <a href="receive-text.html" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-700/50">Receive Notes</a>
+                </div>
+            </div>
         </div>
     </header>
 
     <main class="flex-grow">
       
-      <!-- HERO SECTION -->
-      <section class="flex flex-col items-center justify-center text-center px-4 min-h-[calc(100vh-120px)]">
-        <div class="glass-card p-8 sm:p-12 rounded-2xl shadow-2xl w-full max-w-3xl transition-all duration-300 hover:shadow-fuchsia-500/10 hover:border-slate-700 fade-in-up is-visible">
-            <h2 class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 text-white">
-              Transfer files <span class="gradient-text">instantly.</span>
-            </h2>
-            <p class="max-w-xl mx-auto mb-10 text-lg text-slate-400">
-              Upload files, get a code, and receive them anywhere. No signup. No ads. No hassle.
+      <section class="flex flex-col items-center justify-center text-center px-4 py-16 min-h-[calc(100vh-120px)]">
+        <div class="glass-card p-8 sm:p-10 lg:p-12 rounded-2xl shadow-2xl w-full max-w-3xl transition-all duration-300 hover:shadow-fuchsia-500/10 hover:border-slate-700 fade-in-up is-visible">
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 text-white leading-tight">
+              Share files & notes <span class="gradient-text">instantly.</span>
+            </h1>
+            <p class="max-w-xl mx-auto mb-10 text-base sm:text-lg text-slate-400">
+              Upload content, get a code, and receive it anywhere. No signup. No ads. No hassle.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="send.html" class="bg-fuchsia-600 text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-fuchsia-700 transform hover:scale-105 transition-all duration-300">
+              <a href="send.html" class="bg-fuchsia-600 text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-fuchsia-700 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto">
                 Send Files
               </a>
-              <a href="receive.html" class="bg-slate-500/20 border border-slate-700 text-slate-300 font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-slate-500/30 hover:border-slate-600 transform hover:scale-105 transition-all duration-300">
-                Receive Files
+              <a href="receive.html" class="bg-slate-700/50 border border-slate-700 text-slate-200 font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-slate-700/80 hover:border-slate-600 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto">
+                Receive
               </a>
             </div>
+            <p class="mt-6 text-sm text-slate-400">Or, just <a href="send-text.html" class="font-semibold text-cyan-400 hover:underline">send a quick secure note.</a></p>
         </div>
       </section>
 
-      <!-- HOW IT WORKS SECTION -->
-      <section id="how-it-works" class="py-20 sm:py-32 px-4">
+      <section id="how-it-works" class="py-20 sm:py-28 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
           <div class="text-center">
-            <h2 class="text-4xl sm:text-5xl font-bold text-white fade-in-up">How It <span class="gradient-text">Works</span></h2>
-            <p class="mt-4 text-lg text-slate-400 max-w-2xl mx-auto fade-in-up" style="transition-delay: 100ms;">Simple, secure, and ridiculously fast. Three steps to done.</p>
+            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white fade-in-up">How It <span class="gradient-text">Works</span></h2>
+            <p class="mt-4 text-base sm:text-lg text-slate-400 max-w-2xl mx-auto fade-in-up" style="transition-delay: 100ms;">Simple, secure, and ridiculously fast. Three steps to done.</p>
           </div>
 
           <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             
-            <!-- Step 1 Card -->
             <div class="glass-card p-8 rounded-2xl flex flex-col items-center shadow-lg transform hover:-translate-y-2 transition-transform duration-300 fade-in-up hover:shadow-fuchsia-500/20">
-              <div class="bg-fuchsia-500/10 p-4 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-fuchsia-400">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l-3 3m3-3l3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.33-2.13 5.25 5.25 0 019.67 4.133A4.5 4.5 0 0112 19.5h-5.25z" />
-                </svg>
+              <div class="bg-fuchsia-500/10 p-4 rounded-full mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-fuchsia-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l-3 3m3-3l3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.33-2.13 5.25 5.25 0 019.67 4.133A4.5 4.5 0 0112 19.5h-5.25z" /></svg>
               </div>
-              <h3 class="text-2xl font-bold text-white mt-6 mb-2">1. Upload Files</h3>
-              <p class="text-slate-400">Select files (max 20 MB each) and get a secure 5-digit code instantly.</p>
+              <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">1. Upload or Type</h3>
+              <p class="text-slate-400 text-sm sm:text-base">Choose to <a href="send.html" class="font-semibold text-cyan-400 hover:underline">send files</a> or <a href="send-text.html" class="font-semibold text-cyan-400 hover:underline">send a note</a>. Get a unique 5-digit code.</p>
             </div>
 
-            <!-- Step 2 Card -->
             <div class="glass-card p-8 rounded-2xl flex flex-col items-center shadow-lg transform hover:-translate-y-2 transition-transform duration-300 fade-in-up hover:shadow-cyan-500/20" style="transition-delay: 200ms;">
-              <div class="bg-cyan-500/10 p-4 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-cyan-400">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 5.314l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.828a2.25 2.25 0 103.935-2.186 2.25 2.25 0 00-3.935 2.186z" />
-                </svg>
+              <div class="bg-cyan-500/10 p-4 rounded-full mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 5.314l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.828a2.25 2.25 0 103.935-2.186 2.25 2.25 0 00-3.935 2.186z" /></svg>
               </div>
-              <h3 class="text-2xl font-bold text-white mt-6 mb-2">2. Share the Code</h3>
-              <p class="text-slate-400">Open FileBolt on another device. Enter your code or scan the QR to connect.</p>
+              <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">2. Share the Code</h3>
+              <p class="text-slate-400 text-sm sm:text-base">Give the code to your recipient. They can enter it on any device to access the content.</p>
             </div>
 
-            <!-- Step 3 Card -->
             <div class="glass-card p-8 rounded-2xl flex flex-col items-center shadow-lg transform hover:-translate-y-2 transition-transform duration-300 fade-in-up hover:shadow-fuchsia-500/20" style="transition-delay: 400ms;">
-              <div class="bg-fuchsia-500/10 p-4 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-fuchsia-400">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75l3 3m0 0l3-3m-3 3v-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+              <div class="bg-fuchsia-500/10 p-4 rounded-full mb-6">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-fuchsia-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75l3 3m0 0l3-3m-3 3v-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               </div>
-              <h3 class="text-2xl font-bold text-white mt-6 mb-2">3. Download & Done</h3>
-              <p class="text-slate-400">Download files individually or as a ZIP. They auto-delete in 24 hours for your privacy.</p>
+              <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">3. Download & Done</h3>
+              <p class="text-slate-400 text-sm sm:text-base">Content is downloaded and auto-deleted from our servers after 24 hours for your privacy.</p>
             </div>
             
           </div>
@@ -194,7 +136,15 @@
   </div>
   
   <script>
-    // Simple intersection observer to trigger animations on scroll
+    // --- Responsive Mobile Menu ---
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // --- Animate on Scroll ---
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -202,10 +152,9 @@
         }
       });
     }, {
-      threshold: 0.1 // Trigger when 10% of the element is visible
+      threshold: 0.1
     });
 
-    // Observe all elements with the .fade-in-up class
     const elements = document.querySelectorAll('.fade-in-up');
     elements.forEach(el => observer.observe(el));
   </script>
