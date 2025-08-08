@@ -1,59 +1,57 @@
-// controllers/uploadController.js
-
 const FileGroup = require('../models/FileGroup');
 const generateCode = require('../utils/generateCode');
+const generateQR = require('../utils/generateQR');
 const cloudinary = require('cloudinary').v2;
 
 exports.handleUpload = async (req, res) => {
   try {
-    const { message } = req.body;
-    const files = req.files || []; // Default to an empty array if no files are uploaded
-
-    // --- KEY CHANGE 1: Adjust validation ---
-    // Check if there's NEITHER a message NOR any files.
-    if (!message.trim() && files.length === 0) {
-      return res.status(400).json({ error: 'Cannot create an empty share. Please add a message or files.' });
-    }
+    console.log('Received upload request');
+    console.log('Files:', req.files);
 
     const code = generateCode();
-    let uploadResults = []; // Initialize as an empty array
+    console.log('Generated code:', code);
 
-    // --- KEY CHANGE 2: Only upload to Cloudinary if there are files ---
-    if (files.length > 0) {
-      uploadResults = await Promise.all(
-        files.map(file => {
-          return new Promise((resolve, reject) => {
-            cloudinary.uploader.upload_stream(
-              { resource_type: 'auto' },
-              (error, result) => {
-                if (error) return reject(error);
+    const uploadResults = await Promise.all(
+      req.files.map(file => {
+        return new Promise((resolve, reject) => {
+          console.log('Uploading to Cloudinary:', file.originalname);
+          cloudinary.uploader.upload_stream(
+            { resource_type: 'auto' },
+            (error, result) => {
+              if (error) {
+                console.error('Cloudinary error:', error);
+                reject(error);
+              }
+              else {
+                console.log('Cloudinary success:', result.secure_url);
                 resolve({
+                  filename: file.originalname.replace(/\s+/g, '_'),
                   originalname: file.originalname,
                   url: result.secure_url,
                   size: file.size,
                   cloudinaryId: result.public_id
                 });
               }
-            ).end(file.buffer);
-          });
-        })
-      );
-    }
-    
-    // Create the new document. This works even if uploadResults is empty.
-    const newGroup = new FileGroup({ 
-      code, 
-      message: message.trim(), // Save the trimmed message
-      files: uploadResults 
-    });
-    
+            }
+          ).end(file.buffer);
+        });
+      })
+    );
+
+    console.log('Upload results:', uploadResults);
+
+    const newGroup = new FileGroup({ code, files: uploadResults });
     await newGroup.save();
     console.log('Saved to MongoDB');
 
-    res.status(200).json({ code });
+    const qrData = await generateQR(code);
+    console.log('Generated QR');
+
+    res.status(200).json({ code, qrData });
 
   } catch (err) {
     console.error('Upload failed:', err);
-    res.status(500).json({ error: 'Upload failed due to an internal server error.' });
+    res.status(500).json({ error: 'Upload failed' });
   }
 };
+
