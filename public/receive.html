@@ -159,16 +159,31 @@
           return;
         }
         
-        // NEW: Check for and display the message
-        messageDisplay.innerHTML = ''; // Clear previous message
-        if (data.message && data.message.trim() !== '') {
-            messageDisplay.innerHTML = `
-                <div class="bg-slate-800/50 border-l-4 border-cyan-500 p-4 rounded-lg">
-                    <p class="text-slate-400 text-sm mb-2">A message from the sender:</p>
-                    <p class="text-white whitespace-pre-wrap">${data.message}</p>
-                </div>
-            `;
-        }
+       // NEW: Check for and display the message
+messageDisplay.innerHTML = ''; // Clear previous message
+if (data.message && data.message.trim() !== '') {
+    // We'll use a safer method to inject the text to prevent XSS
+    const messageContainer = document.createElement('div');
+    messageContainer.className = 'bg-slate-800/50 border-l-4 border-cyan-500 p-4 rounded-lg flex flex-col';
+
+    const title = document.createElement('p');
+    title.className = 'text-slate-400 text-sm mb-2 flex-shrink-0';
+    title.textContent = 'A message from the sender:';
+    
+    // This is the key part: a scrollable div for the message content
+    const scrollableContent = document.createElement('div');
+    scrollableContent.className = 'max-h-32 overflow-y-auto pr-2'; // max-h-32 sets max height, overflow-y-auto adds scrollbar
+    
+    const messageText = document.createElement('p');
+    messageText.className = 'text-white whitespace-pre-wrap';
+    messageText.textContent = data.message; // Safely set the text content
+
+    scrollableContent.appendChild(messageText);
+    messageContainer.appendChild(title);
+    messageContainer.appendChild(scrollableContent);
+
+    messageDisplay.appendChild(messageContainer);
+}
 
         // Build file list
         links.innerHTML = data.files.map(f => `

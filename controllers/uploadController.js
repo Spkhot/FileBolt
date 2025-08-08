@@ -2,54 +2,58 @@
 
 const FileGroup = require('../models/FileGroup');
 const generateCode = require('../utils/generateCode');
-// const generateQR = require('../utils/generateQR'); // You can keep this if you use it
 const cloudinary = require('cloudinary').v2;
 
 exports.handleUpload = async (req, res) => {
   try {
-    // The message will be in req.body because it's a text field in the form
-    const { message } = req.body; // <-- ADD THIS LINE
-    const { files } = req; // Get files from request
+    const { message } = req.body;
+    const files = req.files || []; // Default to an empty array if no files are uploaded
 
-    if (!files || files.length === 0) {
-      return res.status(400).json({ error: 'No files uploaded.' });
+    // --- KEY CHANGE 1: Adjust validation ---
+    // Check if there's NEITHER a message NOR any files.
+    if (!message.trim() && files.length === 0) {
+      return res.status(400).json({ error: 'Cannot create an empty share. Please add a message or files.' });
     }
 
     const code = generateCode();
+    let uploadResults = []; // Initialize as an empty array
 
-    const uploadResults = await Promise.all(
-      files.map(file => {
-        return new Promise((resolve, reject) => {
-          cloudinary.uploader.upload_stream(
-            { resource_type: 'auto' },
-            (error, result) => {
-              if (error) return reject(error);
-              resolve({
-                originalname: file.originalname,
-                url: result.secure_url,
-                size: file.size,
-                cloudinaryId: result.public_id
-              });
-            }
-          ).end(file.buffer);
-        });
-      })
-    );
-
-    // MODIFIED: Include the message when creating the new document
+    // --- KEY CHANGE 2: Only upload to Cloudinary if there are files ---
+    if (files.length > 0) {
+      uploadResults = await Promise.all(
+        files.map(file => {
+          return new Promise((resolve, reject) => {
+            cloudinary.uploader.upload_stream(
+              { resource_type: 'auto' },
+              (error, result) => {
+                if (error) return reject(error);
+                resolve({
+                  originalname: file.originalname,
+                  url: result.secure_url,
+                  size: file.size,
+                  cloudinaryId: result.public_id
+                });
+              }
+            ).end(file.buffer);
+          });
+        })
+      );
+    }
+    
+    // Create the new document. This works even if uploadResults is empty.
     const newGroup = new FileGroup({ 
       code, 
-      message, // <-- ADD THE MESSAGE HERE
+      message: message.trim(), // Save the trimmed message
       files: uploadResults 
     });
     
     await newGroup.save();
-    console.log('Saved to MongoDB with message');
+    console.log('Saved to MongoDB');
 
-    res.status(200).json({ code }); // QR data sending removed for simplicity, add it back if you need it
+    res.status(200).json({ code });
 
   } catch (err) {
     console.error('Upload failed:', err);
-    res.status(500).json({ error: 'Upload failed' });
+    res.status(500).json({ error: 'Upload failed due to an internal server error.' });
   }
 };

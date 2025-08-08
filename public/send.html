@@ -121,17 +121,29 @@
     </footer>
   </div>
 
-  <script>
+<!-- PASTE THIS ENTIRE SCRIPT SECTION AT THE BOTTOM OF YOUR index.html -->
+<script>
     const fileInput = document.getElementById('fileInput');
     const fileList = document.getElementById('fileList');
     const uploadBtn = document.getElementById('uploadBtn');
-    const messageInput = document.getElementById('messageInput'); // Get the new textarea
+    const messageInput = document.getElementById('messageInput');
     const errorMessage = document.getElementById('errorMessage');
 
+    // --- KEY CHANGE 1: Function to check if the button should be enabled ---
+    function validateForm() {
+        const hasFiles = fileInput.files.length > 0;
+        const hasMessage = messageInput.value.trim().length > 0;
+        // Enable the button if there are files OR a message
+        uploadBtn.disabled = !hasFiles && !hasMessage;
+    }
+
+    // --- KEY CHANGE 2: Add event listeners to both inputs ---
     fileInput.addEventListener('change', () => {
         updateFileList();
-        uploadBtn.disabled = fileInput.files.length === 0;
+        validateForm(); // Call the validation function
     });
+
+    messageInput.addEventListener('input', validateForm); // Call validation on text input
 
     function updateFileList() {
         fileList.innerHTML = '';
@@ -141,17 +153,26 @@
     }
 
     uploadBtn.addEventListener('click', async () => {
-        if (fileInput.files.length === 0) {
-            errorMessage.textContent = 'Please select at least one file.';
+        // --- KEY CHANGE 3: Update the validation logic before sending ---
+        const hasFiles = fileInput.files.length > 0;
+        const hasMessage = messageInput.value.trim().length > 0;
+
+        if (!hasFiles && !hasMessage) {
+            errorMessage.textContent = 'Please add a message or select a file.';
             return;
         }
         errorMessage.textContent = '';
         
         const formData = new FormData();
-        for (const file of fileInput.files) {
-            formData.append('files', file);
+        
+        // Only append files if they exist
+        if (hasFiles) {
+            for (const file of fileInput.files) {
+                formData.append('files', file);
+            }
         }
-        // NEW: Append the message to the form data
+        
+        // Always append the message
         formData.append('message', messageInput.value.trim());
 
         // UI loading state
@@ -160,24 +181,27 @@
         document.getElementById('uploadBtn-spinner').classList.remove('hidden');
 
         try {
-            const res = await fetch('https://filebolt.onrender.com/api/upload', {
+            // Make sure this URL points to your correct backend (local or production)
+            const res = await fetch('http://localhost:3000/api/upload', {
                 method: 'POST',
                 body: formData
             });
-            const data = await res.json();
-            
-            if (data.error) {
-              errorMessage.textContent = data.error;
-              return;
+
+            if (!res.ok) {
+                // Handle server errors more gracefully
+                const errorData = await res.json();
+                throw new Error(errorData.error || `Server responded with status ${res.status}`);
             }
 
+            const data = await res.json();
+            
             // Show result
             document.getElementById('shareCode').textContent = data.code;
             document.getElementById('upload-form').classList.add('hidden');
             document.getElementById('result-card').classList.remove('hidden');
             
         } catch (err) {
-            errorMessage.textContent = 'Upload failed. Please try again.';
+            errorMessage.textContent = err.message || 'Upload failed. Please try again.';
         } finally {
             // Reset UI
             uploadBtn.disabled = false;
@@ -195,6 +219,6 @@
             setTimeout(() => { btn.textContent = 'Copy Code'; }, 2000);
         });
     });
-  </script>
+</script>
 </body>
 </html>
