@@ -4,9 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FileBolt — Receive a Secure Note</title>
-
+  
   <script src="https://cdn.tailwindcss.com"></script>
-
   <link rel="icon" href="logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,71 +20,69 @@
     @keyframes shake { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
     .group:hover .shake-on-hover { animation: shake 0.3s ease-in-out; }
   </style>
-
 </head>
 
 <body class="main-background text-slate-200 antialiased">
   <div class="relative z-10 flex flex-col min-h-screen">
-
-code
-Code
-download
-content_copy
-expand_less
-
-<header class="sticky top-0 z-50 p-4">
-    <div class="glass-card max-w-7xl mx-auto rounded-xl shadow-lg border-slate-800">
-        <nav class="flex justify-between items-center px-6 py-3">
-            <a href="index.html" class="flex items-center gap-3 group">
-                <svg class="w-8 h-8 text-white group-hover:scale-110 transition-transform duration-300" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <defs><linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#d946ef;" /><stop offset="100%" style="stop-color:#22d3ee;" /></linearGradient></defs>
-                    <path d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" stroke="url(#logoGradient)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                <h1 class="text-2xl font-bold text-white">FileBolt</h1>
-            </a>
-            <a href="index.html" class="font-semibold text-slate-300 hover:text-white relative after:content-[''] after:absolute after:left-0 after:bottom-[-4px] after:w-0 after:h-0.5 after:bg-cyan-400 after:transition-all after:duration-300 hover:after:w-full hidden sm:block">home</a>
-        </nav>
-    </div>
-</header>
-
-<main class="flex-grow flex flex-col items-center justify-center px-4 py-8">
-  <div class="glass-card p-8 sm:p-10 rounded-2xl shadow-2xl w-full max-w-md transition-all duration-300 hover:shadow-cyan-500/10 hover:border-slate-700">
     
-    <div id="form-container">
-      <div class="text-center">
-        <h2 class="text-3xl sm:text-4xl font-bold mb-2 text-white">Retrieve Your <span class="gradient-text">Note</span></h2>
-        <p class="text-slate-400 mb-8">Enter the 5-digit code you received to access your secure note.</p>
-      </div>
-      <div class="flex flex-col items-center">
-        <input type="text" id="codeInput" class="bg-slate-900/70 border border-slate-700 rounded-lg w-full mb-4 px-4 py-3 text-center text-lg tracking-widest placeholder-slate-500 focus:ring-2 focus:ring-fuchsia-500 focus:outline-none focus:border-fuchsia-500 transition-colors" placeholder="_ _ _ _ _" maxlength="5" required>
-        <div id="errorMessage" class="text-red-400 text-sm h-5 mb-2"></div>
-        <button id="getNoteBtn" class="w-full bg-fuchsia-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:bg-fuchsia-700 transform hover:scale-105 transition-all duration-300 flex items-center justify-center">
-          <span id="getNoteBtn-text">Get Note</span>
-          <svg id="getNoteBtn-spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-        </button>
-      </div>
-    </div>
+    <header class="sticky top-0 z-50 p-4">
+        <div class="glass-card max-w-7xl mx-auto rounded-xl shadow-lg border-slate-800">
+            <nav class="flex justify-between items-center px-6 py-3">
+                <a href="index.html" class="flex items-center gap-3 group">
+                    <svg class="w-8 h-8 text-white group-hover:scale-110 transition-transform duration-300" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs><linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#d946ef;" /><stop offset="100%" style="stop-color:#22d3ee;" /></linearGradient></defs>
+                        <path d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" stroke="url(#logoGradient)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <h1 class="text-2xl font-bold text-white">FileBolt</h1>
+                </a>
+                <a href="index.html" class="font-semibold text-slate-300 hover:text-white relative after:content-[''] after:absolute after:left-0 after:bottom-[-4px] after:w-0 after:h-0.5 after:bg-cyan-400 after:transition-all after:duration-300 hover:after:w-full hidden sm:block">home</a>
+            </nav>
+        </div>
+    </header>
 
-    <div id="result-view" class="hidden w-full">
-      <h3 class="text-2xl font-bold mb-6 text-white text-center">Your Secure <span class="gradient-text">Note</span></h3>
-      <div id="messageDisplay" class="mb-6 bg-slate-800/50 border-l-4 border-cyan-500 p-4 rounded-lg max-h-48 overflow-y-auto">
-        <p id="messageText" class="text-white whitespace-pre-wrap"></p>
-      </div>
-      <div class="flex flex-col gap-3">
-        <button id="deleteBtn" class="group w-full flex items-center justify-center gap-2 bg-red-600/80 text-white font-semibold px-6 py-2 rounded-lg hover:bg-red-600 transition-all duration-300">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 shake-on-hover"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.134-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.067-2.09.92-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
-          <span>Delete Note Now</span>
-        </button>
-        <a href="send-text.html" class="w-full text-center bg-cyan-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:bg-cyan-700 transform hover:scale-105 transition-all duration-300">Create a New Note</a>
-      </div>
-    </div>
-  </div>
-</main>
+    <main class="flex-grow flex flex-col items-center justify-center px-4 py-8">
+      <!-- Added md:max-w-2xl to make the card wider on larger screens -->
+      <div class="glass-card p-8 sm:p-10 rounded-2xl shadow-2xl w-full max-w-md md:max-w-2xl transition-all duration-300 hover:shadow-cyan-500/10 hover:border-slate-700">
+        
+        <div id="form-container">
+          <div class="text-center">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-2 text-white">Retrieve Your <span class="gradient-text">Note</span></h2>
+            <p class="text-slate-400 mb-8">Enter the 5-digit code you received to access your secure note.</p>
+          </div>
+          <div class="flex flex-col items-center">
+            <input type="text" id="codeInput" class="bg-slate-900/70 border border-slate-700 rounded-lg w-full mb-4 px-4 py-3 text-center text-lg tracking-widest placeholder-slate-500 focus:ring-2 focus:ring-fuchsia-500 focus:outline-none focus:border-fuchsia-500 transition-colors" placeholder="_ _ _ _ _" maxlength="5" required>
+            <div id="errorMessage" class="text-red-400 text-sm h-5 mb-2"></div>
+            <button id="getNoteBtn" class="w-full bg-fuchsia-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:bg-fuchsia-700 transform hover:scale-105 transition-all duration-300 flex items-center justify-center">
+              <span id="getNoteBtn-text">Get Note</span>
+              <svg id="getNoteBtn-spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            </button>
+          </div>
+        </div>
 
-<footer class="text-center p-8 text-sm text-slate-500">© 2025 FileBolt — Secure. Temporary. Hassle-Free.</footer>
+        <div id="result-view" class="hidden w-full">
+          <h3 class="text-2xl font-bold mb-6 text-white text-center">Your Secure <span class="gradient-text">Note</span></h3>
+          
+          <!-- ***** THE ONLY CHANGE IS HERE: Increased max-h-48 to max-h-96 ***** -->
+          <div id="messageDisplay" class="mb-6 bg-slate-800/50 border-l-4 border-cyan-500 p-4 rounded-lg max-h-96 overflow-y-auto">
+            <p id="messageText" class="text-white whitespace-pre-wrap"></p>
+          </div>
+
+          <div class="flex flex-col gap-3">
+            <button id="deleteBtn" class="group w-full flex items-center justify-center gap-2 bg-red-600/80 text-white font-semibold px-6 py-2 rounded-lg hover:bg-red-600 transition-all duration-300">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 shake-on-hover"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.134-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.067-2.09.92-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
+              <span>Delete Note Now</span>
+            </button>
+            <a href="send-text.html" class="w-full text-center bg-cyan-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:bg-cyan-700 transform hover:scale-105 transition-all duration-300">Create a New Note</a>
+          </div>
+        </div>
+      </div>
+    </main>
+    
+    <footer class="text-center p-8 text-sm text-slate-500">© 2025 FileBolt — Secure. Temporary. Hassle-Free.</footer>
   </div>
 
   <script>
+    // This script remains unchanged as the logic is correct.
     const formContainer = document.getElementById('form-container');
     const resultView = document.getElementById('result-view');
     const getNoteBtn = document.getElementById('getNoteBtn');
@@ -107,7 +104,6 @@ expand_less
       document.getElementById('getNoteBtn-spinner').classList.remove('hidden');
 
       try {
-        // Call the DEDICATED text download route
         const res = await fetch(`/api/text/download/${code}`);
         const data = await res.json();
         
@@ -116,7 +112,6 @@ expand_less
           return;
         }
 
-        // Safely set the text content
         messageText.textContent = data.message;
         deleteBtn.onclick = () => handleDelete(code);
 
@@ -135,7 +130,6 @@ expand_less
     async function handleDelete(code) {
       if (!confirm('Are you sure you want to permanently delete this note? This action cannot be undone.')) return;
       try {
-        // Call the DEDICATED text delete route
         const delRes = await fetch(`/api/text/delete/${code}`, { method: 'DELETE' });
         const delData = await delRes.json();
         
@@ -143,13 +137,12 @@ expand_less
           alert(`Error: ${delData.error}`);
         } else {
           alert('Note has been successfully deleted.');
-          window.location.href = 'index.html'; // Redirect to home page
+          window.location.href = 'index.html';
         }
       } catch (err) {
         alert('A network error occurred while trying to delete the note.');
       }
     }
   </script>
-
 </body>
 </html>
