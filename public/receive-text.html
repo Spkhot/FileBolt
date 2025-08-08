@@ -25,6 +25,7 @@
 <body class="main-background text-slate-200 antialiased">
   <div class="relative z-10 flex flex-col min-h-screen">
     
+    <!-- (Your responsive navbar code would go here, I'm using the simple one for clarity) -->
     <header class="sticky top-0 z-50 p-4">
         <div class="glass-card max-w-7xl mx-auto rounded-xl shadow-lg border-slate-800">
             <nav class="flex justify-between items-center px-6 py-3">
@@ -35,13 +36,14 @@
                     </svg>
                     <h1 class="text-2xl font-bold text-white">FileBolt</h1>
                 </a>
-                <a href="index.html" class="font-semibold text-slate-300 hover:text-white relative after:content-[''] after:absolute after:left-0 after:bottom-[-4px] after:w-0 after:h-0.5 after:bg-cyan-400 after:transition-all after:duration-300 hover:after:w-full hidden sm:block">home</a>
+                <a href="index.html" class="font-semibold text-slate-300 hover:text-white relative after:content-[''] after:absolute after:left-0 after:bottom-[-4px] after:w-0 after:h-0.5 after:bg-cyan-400 after:transition-all after:duration-300 hover:after:w-full hidden sm:block">Home</a>
             </nav>
         </div>
     </header>
 
     <main class="flex-grow flex flex-col items-center justify-center px-4 py-8">
-      <div class="glass-card p-8 sm:p-10 rounded-2xl shadow-2xl w-full max-w-md transition-all duration-300 hover:shadow-cyan-500/10 hover:border-slate-700">
+      <!-- KEY CHANGE 1: Made the card wider on medium screens and up (md:max-w-2xl) -->
+      <div class="glass-card p-8 sm:p-10 rounded-2xl shadow-2xl w-full max-w-md md:max-w-2xl transition-all duration-300 hover:shadow-cyan-500/10 hover:border-slate-700">
         
         <div id="form-container">
           <div class="text-center">
@@ -60,7 +62,8 @@
 
         <div id="result-view" class="hidden w-full">
           <h3 class="text-2xl font-bold mb-6 text-white text-center">Your Secure <span class="gradient-text">Note</span></h3>
-          <div id="messageDisplay" class="mb-6 bg-slate-800/50 border-l-4 border-cyan-500 p-4 rounded-lg max-h-48 overflow-y-auto">
+          <!-- KEY CHANGE 2: Increased max-height from max-h-48 to max-h-72 -->
+          <div id="messageDisplay" class="mb-6 bg-slate-800/50 border-l-4 border-cyan-500 p-4 rounded-lg max-h-72 overflow-y-auto">
             <p id="messageText" class="text-white whitespace-pre-wrap"></p>
           </div>
           <div class="flex flex-col gap-3">
@@ -78,6 +81,7 @@
   </div>
 
   <script>
+    // This script remains unchanged as the logic is correct.
     const formContainer = document.getElementById('form-container');
     const resultView = document.getElementById('result-view');
     const getNoteBtn = document.getElementById('getNoteBtn');
@@ -99,7 +103,6 @@
       document.getElementById('getNoteBtn-spinner').classList.remove('hidden');
 
       try {
-        // Call the DEDICATED text download route
         const res = await fetch(`/api/text/download/${code}`);
         const data = await res.json();
         
@@ -108,7 +111,6 @@
           return;
         }
 
-        // Safely set the text content
         messageText.textContent = data.message;
         deleteBtn.onclick = () => handleDelete(code);
 
@@ -127,7 +129,6 @@
     async function handleDelete(code) {
       if (!confirm('Are you sure you want to permanently delete this note? This action cannot be undone.')) return;
       try {
-        // Call the DEDICATED text delete route
         const delRes = await fetch(`/api/text/delete/${code}`, { method: 'DELETE' });
         const delData = await delRes.json();
         
@@ -135,7 +136,7 @@
           alert(`Error: ${delData.error}`);
         } else {
           alert('Note has been successfully deleted.');
-          window.location.href = 'index.html'; // Redirect to home page
+          window.location.href = 'index.html';
         }
       } catch (err) {
         alert('A network error occurred while trying to delete the note.');
