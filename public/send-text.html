@@ -77,45 +77,65 @@
   </div>
 
   <script>
+    // Get only the elements that exist on this page
     const uploadBtn = document.getElementById('uploadBtn');
     const messageInput = document.getElementById('messageInput');
     const errorMessage = document.getElementById('errorMessage');
 
+    // Enable the button only when there is text in the message box
     messageInput.addEventListener('input', () => {
         uploadBtn.disabled = messageInput.value.trim().length === 0;
     });
 
+    // Handle the click event for the button
     uploadBtn.addEventListener('click', async () => {
+        // Simple validation: check if the message is empty
         if (messageInput.value.trim().length === 0) {
             errorMessage.textContent = 'Please enter a message to share.';
             return;
         }
         errorMessage.textContent = '';
         
+        // Create FormData and add ONLY the message
         const formData = new FormData();
         formData.append('message', messageInput.value.trim());
 
+        // Show loading state
         uploadBtn.disabled = true;
         document.getElementById('uploadBtn-text').classList.add('hidden');
         document.getElementById('uploadBtn-spinner').classList.remove('hidden');
 
         try {
-            const res = await fetch('/api/upload', { method: 'POST', body: formData });
-            if (!res.ok) throw new Error((await res.json()).error || 'Server error');
+            // Send the request to the server (using a relative URL is best practice)
+            const res = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            // Check if the server responded with an error
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.error || 'Server responded with an error');
+            }
+            
             const data = await res.json();
             
+            // Show the success card with the code
             document.getElementById('shareCode').textContent = data.code;
             document.getElementById('upload-form').classList.add('hidden');
             document.getElementById('result-card').classList.remove('hidden');
+
         } catch (err) {
             errorMessage.textContent = err.message || 'Request failed. Please try again.';
         } finally {
+            // Reset the button's loading state
             uploadBtn.disabled = false;
             document.getElementById('uploadBtn-text').classList.remove('hidden');
             document.getElementById('uploadBtn-spinner').classList.add('hidden');
         }
     });
 
+    // Logic for the 'Copy Code' button on the success card
     document.getElementById('copyBtn').addEventListener('click', () => {
         const code = document.getElementById('shareCode').textContent;
         navigator.clipboard.writeText(code).then(() => {
@@ -124,6 +144,6 @@
             setTimeout(() => { btn.textContent = 'Copy Code'; }, 2000);
         });
     });
-  </script>
+</script>
 </body>
 </html>
